@@ -44,7 +44,7 @@
 
         "paths": {
             "@/*": ["./src/*"],
-            "@db": ["./prisma/generate/models.ts"]
+            "@db/*": ["./prisma/generated/*"]
         }
     },
     "include": ["src/**/*.ts", "test/**/*.spec.ts", "test/**/*.test.ts"],

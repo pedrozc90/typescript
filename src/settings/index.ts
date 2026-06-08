@@ -1,9 +1,9 @@
 import pkg from "../../package.json" with { type: "json" };
-import { Settings } from "../types";
-import { toInt } from "../utils";
+import { Settings } from "../types/index.ts";
+import { toInt } from "../utils/index.ts";
 
 const env = process.env["NODE_ENV"];
-if (typeof env === "string" && !(env === "production" || env === "development")) {
+if (typeof env === "string" && !(env === "production" || env === "development" || env === "test")) {
     throw new Error(`Invalid NODE_ENV '${env}' value.`);
 }
 

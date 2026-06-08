@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
-import { UserRole, type User } from "@db/models/User.ts";
+import { UserRole, type User } from "../../prisma/generated/models/User.ts";
 
-import { settings } from "../settings";
+import { settings } from "../settings/index.ts";
 import { prisma } from "../libs/prisma.ts";
 
 export type UserPayload = {

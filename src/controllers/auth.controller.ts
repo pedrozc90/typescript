@@ -3,7 +3,7 @@ import { rateLimit } from "express-rate-limit";
 
 import { AuthService } from "../services/index.ts";
 
-const authRouter = Router();
+export const authRouter = Router();
 
 const loginRateLimiter = rateLimit({
     windowMs: 60_000,
@@ -28,5 +28,3 @@ authRouter.post("/login", loginRateLimiter, async (request: Request, response: R
 
     return response.status(200).json(result.data);
 });
-
-export default authRouter;

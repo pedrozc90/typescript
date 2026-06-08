@@ -19,7 +19,7 @@ export interface DatabaseSettings {
 export interface Settings {
     name: string;
     version: string;
-    env: "production" | "development";
+    env: "production" | "development" | "test";
     port: number;
     jwt: JwtSettings;
     db: DatabaseSettings;

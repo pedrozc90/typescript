@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from "express";
 import { UserService } from "../services/index.ts";
 
-const userRouter = Router();
+export const userRouter = Router();
 
 const respondError = (
     response: Response,
@@ -56,5 +56,3 @@ userRouter.get("/users", async (_request: Request, response: Response) => {
 
     return response.status(200).json(users);
 });
-
-export default userRouter;
