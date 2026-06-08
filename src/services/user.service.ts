@@ -2,8 +2,9 @@ import bcrypt from "bcryptjs";
 import { type User } from "../../prisma/generated/client.ts";
 import { UserRole, type UserRole as UserRoleType } from "../../prisma/generated/enums.ts";
 
-import { settings } from "../settings/index.ts";
 import { prisma } from "../libs/prisma.ts";
+import { toBigInt } from "../utils/index.ts";
+import { settings } from "../settings/index.ts";
 
 export type UserPayload = {
     id: string;
@@ -12,7 +13,7 @@ export type UserPayload = {
     updated_at: string;
     version: number;
     role: UserRoleType;
-    last_login_timestamp: string | null;
+    logged_at: string | null;
 };
 
 export type UserServiceErrorCode = "VALIDATION" | "CONFLICT" | "NOT_FOUND";
@@ -22,28 +23,11 @@ export type UserServiceError = {
     message: string;
 };
 
-export type UserServiceResult<T> =
-    | {
-          data: T;
-      }
-    | {
-          error: UserServiceError;
-      };
+export type UserServiceResult<T> = { data: T; } | { error: UserServiceError; };
 
-export type CreateUserInput = {
-    email?: string;
-    password?: string;
-    role?: string;
-    profile?: string;
-};
+export type CreateUserInput = Pick<User, "email" | "password" | "role">;
 
-export type UpdateUserInput = {
-    id?: string | number;
-    email?: string;
-    password?: string;
-    role?: string;
-    profile?: string;
-};
+export type UpdateUserInput = Partial<Pick<User, "email" | "password" | "role">>;
 
 const isValidEmail = (email: string): boolean => {
     if (email.length > 254) {
@@ -62,31 +46,14 @@ const isValidEmail = (email: string): boolean => {
 };
 
 const normalizeRole = (role?: string): UserRole | undefined => {
-    if (role === undefined) {
-        return undefined;
-    }
+    if (!role) return undefined;
 
     const normalized = role.toUpperCase();
-
     if (normalized !== UserRole.USER && normalized !== UserRole.ADMIN) {
         return undefined;
     }
 
     return normalized as UserRole;
-};
-
-const parseUserId = (id: string | number): bigint | null => {
-    try {
-        const value = BigInt(id);
-
-        if (value <= 0n) {
-            return null;
-        }
-
-        return value;
-    } catch {
-        return null;
-    }
 };
 
 const toUserPayload = (user: User): UserPayload => {
@@ -97,7 +64,7 @@ const toUserPayload = (user: User): UserPayload => {
         updated_at: user.updatedAt.toISOString(),
         version: user.version,
         role: user.role,
-        last_login_timestamp: user.lastLoginTimestamp?.toISOString() ?? null,
+        logged_at: user.lastLoginTimestamp?.toISOString() ?? null,
     };
 };
 
@@ -107,7 +74,7 @@ const isPrismaErrorCode = (error: unknown, code: string): boolean => {
 
 export const createUser = async (input: CreateUserInput): Promise<UserServiceResult<UserPayload>> => {
     const { email, password } = input;
-    const role = normalizeRole(input.role ?? input.profile);
+    const role = normalizeRole(input.role);
 
     if (!email || !password) {
         return { error: { code: "VALIDATION", message: "email and password are required" } };
@@ -146,15 +113,15 @@ export const createUser = async (input: CreateUserInput): Promise<UserServiceRes
     }
 };
 
-export const updateUser = async (input: UpdateUserInput): Promise<UserServiceResult<UserPayload>> => {
-    const { id, email, password } = input;
-    const role = normalizeRole(input.role ?? input.profile);
+export const updateUser = async (id: string, input: UpdateUserInput): Promise<UserServiceResult<UserPayload>> => {
+    const { email, password } = input;
+    const role = normalizeRole(input.role);
 
     if (id === undefined) {
         return { error: { code: "VALIDATION", message: "id is required" } };
     }
 
-    const userId = parseUserId(id);
+    const userId = toBigInt(id);
 
     if (userId === null) {
         return { error: { code: "VALIDATION", message: "invalid id" } };
@@ -168,7 +135,7 @@ export const updateUser = async (input: UpdateUserInput): Promise<UserServiceRes
         return { error: { code: "VALIDATION", message: "password must have at least 8 characters" } };
     }
 
-    if ((input.role || input.profile) && !role) {
+    if ((input.role) && !role) {
         return { error: { code: "VALIDATION", message: "invalid role/profile" } };
     }
 
@@ -214,7 +181,7 @@ export const updateUser = async (input: UpdateUserInput): Promise<UserServiceRes
 };
 
 export const getUserById = async (id: string): Promise<UserServiceResult<UserPayload>> => {
-    const userId = parseUserId(id);
+    const userId = toBigInt(id);
 
     if (userId === null) {
         return { error: { code: "VALIDATION", message: "invalid id" } };

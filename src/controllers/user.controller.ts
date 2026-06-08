@@ -31,8 +31,8 @@ userRouter.post("/users", async (request: Request, response: Response) => {
     return response.status(201).json(result.data);
 });
 
-userRouter.put("/users", async (request: Request, response: Response) => {
-    const result = await UserService.updateUser(request.body);
+userRouter.put("/users/:id", async (request: Request, response: Response) => {
+    const result = await UserService.updateUser(request.params.id, request.body);
 
     if ("error" in result) {
         return respondError(response, result.error);

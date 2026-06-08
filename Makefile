@@ -11,6 +11,16 @@ help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
+# ── docker ───────────────────────────────────────────────────────────────────
+
+.PHONY: up
+up: ## start containers
+	docker compose up --detach
+
+.PHONY: down
+down: ## start containers
+	docker compose down --volumes
+
 # ── nodejs ───────────────────────────────────────────────────────────────────
 
 .PHONY: dev
@@ -28,13 +38,13 @@ coverage: ## run tests coverage
 # ── prisma ───────────────────────────────────────────────────────────────────
 
 .PHONY: prisma-init
-dev: ## initialize prisma ORM
+prisma-init: ## initialize prisma ORM
 	npx prisma init
 
 .PHONY: prisma-migrate
-dev: ## create prima first migration
+prisma-migrate: ## create prima first migration
 	npx prisma migrate dev --name init
 
 .PHONY: prisma-generate
-dev: ## generate prisma client
+prisma-generate: ## generate prisma client
 	npx prisma generate
