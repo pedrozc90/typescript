@@ -1,4 +1,8 @@
-const env = process.env["NODE_ENV"];
+import { app } from "./app.ts";
+import { config } from "./config.ts";
 
-console.log("Sanity Check");
-console.log("Environment", env);
+if (import.meta.url === `file://${process.argv[1]}`) {
+    app.listen(config.port, () => {
+        console.log(`API listening on port ${config.port}`);
+    });
+}
