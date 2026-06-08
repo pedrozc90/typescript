@@ -11,23 +11,23 @@
 
 1. Install dependencies:
 
-   ```bash
-   npm install
-   ```
+    ```bash
+    npm install
+    ```
 
 2. Update environment variables in `.env`.
 
 3. Generate Prisma client:
 
-   ```bash
-   npm run prisma:generate
-   ```
+    ```bash
+    npm run prisma:generate
+    ```
 
 4. Apply SQL migrations:
 
-   ```bash
-   npm run prisma:migrate:deploy
-   ```
+    ```bash
+    npm run prisma:migrate:deploy
+    ```
 
 ## Run API
 

@@ -43,7 +43,8 @@
         "skipLibCheck": true,
 
         "paths": {
-            "@/*": ["./src/*"]
+            "@/*": ["./src/*"],
+            "@db": ["./prisma/generate/models.ts"]
         }
     },
     "include": ["src/**/*.ts", "test/**/*.spec.ts", "test/**/*.test.ts"],

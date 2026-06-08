@@ -24,3 +24,17 @@ test: ## run tests
 .PHONY: coverage
 coverage: ## run tests coverage
 	npm run test:coverage
+
+# ── prisma ───────────────────────────────────────────────────────────────────
+
+.PHONY: prisma-init
+dev: ## initialize prisma ORM
+	npx prisma init
+
+.PHONY: prisma-migrate
+dev: ## create prima first migration
+	npx prisma migrate dev --name init
+
+.PHONY: prisma-generate
+dev: ## generate prisma client
+	npx prisma generate

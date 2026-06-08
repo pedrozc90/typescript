@@ -2,8 +2,8 @@ import compression from "compression";
 import cors from "cors";
 import express, { type Request, type Response } from "express";
 import helmet from "helmet";
-import { authRouter } from "./auth.controller.ts";
-import { userRouter } from "./user.controller.ts";
+
+import { authRouter, userRouter } from "./controllers/index.ts";
 
 export const app = express();
 

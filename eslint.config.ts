@@ -4,11 +4,7 @@ import tseslint from "typescript-eslint";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
-    globalIgnores([
-        "dist/",
-        "node_modules/",
-        "coverage"
-    ]),
+    globalIgnores(["dist/", "node_modules/", "coverage"]),
     {
         files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
         plugins: { js },
@@ -18,7 +14,7 @@ export default defineConfig([
     tseslint.configs.recommended,
     {
         rules: {
-            "@typescript-eslint/no-unused-vars": "off"
-        }
-    }
+            "@typescript-eslint/no-unused-vars": "off",
+        },
+    },
 ]);

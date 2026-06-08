@@ -1,10 +1,10 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output = "./generated"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 enum UserRole {
@@ -13,14 +13,12 @@ enum UserRole {
 }
 
 model User {
-  id                 BigInt    @id @default(autoincrement())
-  email              String    @unique
-  password           String
-  insertedAt         DateTime  @default(now()) @map("inserted_at")
-  updatedAt          DateTime  @updatedAt @map("updated_at")
-  version            Int       @default(1)
-  role               UserRole  @default(USER)
-  lastLoginTimestamp DateTime? @map("last_login_timestamp")
-
-  @@map("users")
+  id         BigInt    @id @default(autoincrement())
+  insertedAt DateTime  @default(now()) @map("inserted_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  version    Int       @default(1)
+  email      String    @unique
+  password   String
+  role       UserRole  @default(USER)
+  loggedAt   DateTime?
 }

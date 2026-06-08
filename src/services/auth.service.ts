@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { config } from "./config.ts";
-import { prisma } from "./prisma.ts";
+
+import { prisma } from "../libs/index.ts";
+import { settings } from "../settings/index.ts";
 
 export type LoginInput = {
     email?: string;
@@ -60,7 +61,7 @@ export const login = async (input: LoginInput): Promise<AuthServiceResult> => {
         },
     });
 
-    const accessTokenExpiresAt = new Date(Date.now() + config.accessTokenExpiresInSeconds * 1000);
+    const accessTokenExpiresAt = new Date(Date.now() + settings.jwt.accessToken.expiresIn);
 
     const accessToken = jwt.sign(
         {
@@ -68,9 +69,9 @@ export const login = async (input: LoginInput): Promise<AuthServiceResult> => {
             email: updatedUser.email,
             role: updatedUser.role,
         },
-        config.accessTokenSecret,
+        settings.jwt.accessToken.secret,
         {
-            expiresIn: config.accessTokenExpiresInSeconds,
+            expiresIn: settings.jwt.accessToken.expiresIn,
         },
     );
 
@@ -79,9 +80,9 @@ export const login = async (input: LoginInput): Promise<AuthServiceResult> => {
             sub: updatedUser.id.toString(),
             type: "refresh",
         },
-        config.refreshTokenSecret,
+        settings.jwt.refreshToken.secret,
         {
-            expiresIn: config.refreshTokenExpiresIn,
+            expiresIn: settings.jwt.refreshToken.expiresIn,
         },
     );
 

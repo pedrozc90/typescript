@@ -1,7 +1,8 @@
-import { UserRole, type User } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { config } from "./config.ts";
-import { prisma } from "./prisma.ts";
+import { UserRole, type User } from "@db/models/User.ts";
+
+import { settings } from "../settings";
+import { prisma } from "../libs/prisma.ts";
 
 export type UserPayload = {
     id: string;
@@ -123,7 +124,7 @@ export const createUser = async (input: CreateUserInput): Promise<UserServiceRes
         return { error: { code: "VALIDATION", message: "invalid role/profile" } };
     }
 
-    const hashedPassword = await bcrypt.hash(password, config.bcryptSaltRounds);
+    const hashedPassword = await bcrypt.hash(password, settings.jwt.salt);
 
     try {
         const user = await prisma.user.create({
@@ -184,7 +185,7 @@ export const updateUser = async (input: UpdateUserInput): Promise<UserServiceRes
     }
 
     if (password) {
-        updates.password = await bcrypt.hash(password, config.bcryptSaltRounds);
+        updates.password = await bcrypt.hash(password, settings.jwt.salt);
     }
 
     if (role) {

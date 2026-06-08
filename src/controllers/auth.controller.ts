@@ -1,8 +1,10 @@
 import { Router, type Request, type Response } from "express";
 import { rateLimit } from "express-rate-limit";
-import { login } from "./auth.service.ts";
 
-export const authRouter = Router();
+import { AuthService } from "../services/index.ts";
+
+const authRouter = Router();
+
 const loginRateLimiter = rateLimit({
     windowMs: 60_000,
     limit: 10,
@@ -14,7 +16,7 @@ const loginRateLimiter = rateLimit({
 });
 
 authRouter.post("/login", loginRateLimiter, async (request: Request, response: Response) => {
-    const result = await login(request.body);
+    const result = await AuthService.login(request.body);
 
     if ("error" in result) {
         if (result.error.code === "VALIDATION") {
@@ -26,3 +28,5 @@ authRouter.post("/login", loginRateLimiter, async (request: Request, response: R
 
     return response.status(200).json(result.data);
 });
+
+export default authRouter;

@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from "express";
-import { createUser, getUserById, listUsers, updateUser } from "./user.service.ts";
+import { UserService } from "../services/index.ts";
 
-export const userRouter = Router();
+const userRouter = Router();
 
 const respondError = (
     response: Response,
@@ -22,7 +22,7 @@ const respondError = (
 };
 
 userRouter.post("/users", async (request: Request, response: Response) => {
-    const result = await createUser(request.body);
+    const result = await UserService.createUser(request.body);
 
     if ("error" in result) {
         return respondError(response, result.error);
@@ -32,7 +32,7 @@ userRouter.post("/users", async (request: Request, response: Response) => {
 });
 
 userRouter.put("/users", async (request: Request, response: Response) => {
-    const result = await updateUser(request.body);
+    const result = await UserService.updateUser(request.body);
 
     if ("error" in result) {
         return respondError(response, result.error);
@@ -42,7 +42,7 @@ userRouter.put("/users", async (request: Request, response: Response) => {
 });
 
 userRouter.get("/users/:id", async (request: Request<{ id: string }>, response: Response) => {
-    const result = await getUserById(request.params.id);
+    const result = await UserService.getUserById(request.params.id);
 
     if ("error" in result) {
         return respondError(response, result.error);
@@ -52,7 +52,9 @@ userRouter.get("/users/:id", async (request: Request<{ id: string }>, response: 
 });
 
 userRouter.get("/users", async (_request: Request, response: Response) => {
-    const users = await listUsers();
+    const users = await UserService.listUsers();
 
     return response.status(200).json(users);
 });
+
+export default userRouter;
