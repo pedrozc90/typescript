@@ -1,5 +1,5 @@
 import pkg from "../../package.json" with { type: "json" };
-import { Settings } from "../types/index.ts";
+import { type Settings } from "../types/index.ts";
 import { toInt } from "../utils/index.ts";
 
 const env = process.env["NODE_ENV"];

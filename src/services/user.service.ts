@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
-import { UserRole, type User } from "../../prisma/generated/models/User.ts";
+import { type User } from "../../prisma/generated/client.ts";
+import { UserRole, type UserRole as UserRoleType } from "../../prisma/generated/enums.ts";
 
 import { settings } from "../settings/index.ts";
 import { prisma } from "../libs/prisma.ts";
@@ -10,7 +11,7 @@ export type UserPayload = {
     inserted_at: string;
     updated_at: string;
     version: number;
-    role: UserRole;
+    role: UserRoleType;
     last_login_timestamp: string | null;
 };
 

@@ -5,7 +5,9 @@
     "type": "module",
     "main": "src/index.ts",
     "scripts": {
+        "prestart": "npm run prisma:generate",
         "start": "node --experimental-strip-types --env-file=.env src/index.ts",
+        "prestart:dev": "npm run prisma:generate",
         "start:dev": "node --watch --experimental-strip-types --env-file=.env src/index.ts",
         "type-check": "tsc --noEmit",
         "build": "tsc --project tsconfig.json",
@@ -14,6 +16,7 @@
         "lint": "eslint",
         "lint:fix": "eslint --fix",
         "test": "vitest",
+        "pretest:run": "npm run prisma:generate",
         "test:run": "vitest run",
         "test:coverage": "vitest run --coverage",
         "prisma:generate": "prisma generate",
