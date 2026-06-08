@@ -1,7 +1,11 @@
+export interface DatabaseSettings {
+    url: string;
+}
+
 export interface Settings {
     nodeEnv: string;
     port: number;
-    databaseUrl: string;
     tokenExpiresInSeconds: number;
     tokenSecret: string;
+    db: DatabaseSettings;
 }

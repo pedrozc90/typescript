@@ -1,7 +1,7 @@
 import Router from "@koa/router";
 import type Koa from "koa";
 import { login } from "../services/auth.service.ts";
-import type { LoginInput } from "../../types/auth.ts";
+import type { LoginInput } from "../types/auth.ts";
 
 export const authRouter = new Router();
 
@@ -11,7 +11,7 @@ authRouter.post("/login", async (ctx) => {
     if (!payload.email || !payload.password) {
         ctx.status = 400;
         ctx.body = {
-            message: "email and password are required"
+            message: "email and password are required",
         };
 
         return;
@@ -19,13 +19,13 @@ authRouter.post("/login", async (ctx) => {
 
     const result = await login({
         email: payload.email,
-        password: payload.password
+        password: payload.password,
     });
 
     if (!result) {
         ctx.status = 401;
         ctx.body = {
-            message: "invalid credentials"
+            message: "invalid credentials",
         };
 
         return;

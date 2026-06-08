@@ -1,28 +1,9 @@
 import Router from "@koa/router";
 import type Koa from "koa";
-import {
-    createUser,
-    EmailAlreadyExistsError,
-    getUserById,
-    listUsers,
-    updateUser,
-    UserNotFoundError
-} from "../services/user.service.ts";
-import type { CreateUserInput, UpdateUserInput } from "../../types/user.ts";
 
-function parseId(value: string | undefined): number | null {
-    if (!value) {
-        return null;
-    }
-
-    const parsed = Number.parseInt(value, 10);
-
-    if (Number.isNaN(parsed) || parsed <= 0) {
-        return null;
-    }
-
-    return parsed;
-}
+import { UserService } from "../services/index.ts";
+import { type CreateUserInput, type UpdateUserInput, EmailAlreadyExistsError, UserNotFoundError } from "../types/index.ts";
+import { toBigInt } from "@/utils/index.ts";
 
 export const userRouter = new Router();
 
@@ -32,7 +13,7 @@ userRouter.post("/users", async (ctx) => {
     if (!payload.email || !payload.password) {
         ctx.status = 400;
         ctx.body = {
-            message: "email and password are required"
+            message: "email and password are required",
         };
 
         return;
@@ -41,11 +22,11 @@ userRouter.post("/users", async (ctx) => {
     const createInput: CreateUserInput = {
         email: payload.email,
         password: payload.password,
-        ...(payload.role ? { role: payload.role } : {})
+        role: payload.role ?? "USER",
     };
 
     try {
-        const user = await createUser(createInput);
+        const user = await UserService.createUser(createInput);
 
         ctx.status = 201;
         ctx.body = user;
@@ -53,7 +34,7 @@ userRouter.post("/users", async (ctx) => {
         if (error instanceof EmailAlreadyExistsError) {
             ctx.status = 409;
             ctx.body = {
-                message: "email already exists"
+                message: "email already exists",
             };
 
             return;
@@ -69,7 +50,7 @@ userRouter.put("/users", async (ctx) => {
     if (!payload.id) {
         ctx.status = 400;
         ctx.body = {
-            message: "id is required"
+            message: "id is required",
         };
 
         return;
@@ -78,19 +59,19 @@ userRouter.put("/users", async (ctx) => {
     const updateInput: UpdateUserInput = {
         ...(payload.email ? { email: payload.email } : {}),
         ...(payload.password ? { password: payload.password } : {}),
-        ...(payload.role ? { role: payload.role } : {})
+        ...(payload.role ? { role: payload.role } : {}),
     };
 
     try {
-        const user = await updateUser(payload.id, updateInput);
+        const user = await UserService.updateUser(payload.id, updateInput);
 
         ctx.status = 200;
         ctx.body = user;
     } catch (error) {
         if (error instanceof UserNotFoundError) {
-            ctx.status = 404;
+            ctx.status = error.status;
             ctx.body = {
-                message: "user not found for update"
+                message: error.message,
             };
 
             return;
@@ -101,23 +82,23 @@ userRouter.put("/users", async (ctx) => {
 });
 
 userRouter.get("/users/:id", async (ctx) => {
-    const id = parseId(ctx.params["id"]);
+    const id = toBigInt(ctx.params["id"]);
 
     if (!id) {
         ctx.status = 400;
         ctx.body = {
-            message: "invalid id"
+            message: "invalid id",
         };
 
         return;
     }
 
-    const user = await getUserById(id);
+    const user = await UserService.getUserById(id);
 
     if (!user) {
         ctx.status = 404;
         ctx.body = {
-            message: "user not found"
+            message: "user not found",
         };
 
         return;
@@ -128,7 +109,7 @@ userRouter.get("/users/:id", async (ctx) => {
 });
 
 userRouter.get("/users", async (ctx) => {
-    const users = await listUsers();
+    const users = await UserService.listUsers();
 
     ctx.status = 200;
     ctx.body = users;

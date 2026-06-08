@@ -15,7 +15,7 @@ export function createApp(): Koa {
             console.error("Unhandled request error", error);
             ctx.status = 500;
             ctx.body = {
-                message: "internal server error"
+                message: "internal server error",
             };
         }
     });

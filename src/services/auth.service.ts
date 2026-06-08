@@ -1,13 +1,13 @@
 import { prisma } from "../libs/prisma.ts";
 import { generateSignedToken, verifyPassword } from "../libs/crypto.ts";
 import { settings } from "../../settings/index.ts";
-import type { LoginInput, LoginResponse } from "../../types/auth.ts";
+import type { LoginInput, LoginResponse } from "../types/index.ts";
 
 export async function login(input: LoginInput): Promise<LoginResponse | null> {
     const user = await prisma.user.findUnique({
         where: {
-            email: input.email
-        }
+            email: input.email,
+        },
     });
 
     if (!user || !verifyPassword(input.password, user.password)) {
@@ -19,9 +19,9 @@ export async function login(input: LoginInput): Promise<LoginResponse | null> {
         data: {
             loggedAt: new Date(),
             version: {
-                increment: 1
-            }
-        }
+                increment: 1,
+            },
+        },
     });
 
     const now = Date.now();
@@ -31,6 +31,6 @@ export async function login(input: LoginInput): Promise<LoginResponse | null> {
     return {
         access_token: generateSignedToken(user.id, "access", accessExpiresAt, settings.tokenSecret),
         refresh_token: generateSignedToken(user.id, "refresh", refreshExpiresAt, settings.tokenSecret),
-        expires_at: accessExpiresAt.toISOString()
+        expires_at: accessExpiresAt.toISOString(),
     };
 }

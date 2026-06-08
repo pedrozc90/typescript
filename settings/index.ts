@@ -25,7 +25,7 @@ export function loadSettings(env: NodeJS.ProcessEnv = process.env): Settings {
         port: readNumber(env["PORT"], 3000),
         databaseUrl,
         tokenExpiresInSeconds: readNumber(env["TOKEN_EXPIRES_IN_SECONDS"], 3600),
-        tokenSecret: env["TOKEN_SECRET"] ?? "development-token-secret"
+        tokenSecret: env["TOKEN_SECRET"] ?? "development-token-secret",
     };
 }
 

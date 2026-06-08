@@ -26,23 +26,16 @@ export function verifyPassword(password: string, storedPassword: string): boolea
     return timingSafeEqual(Buffer.from(hash, "hex"), Buffer.from(storedHash, "hex"));
 }
 
-export function generateSignedToken(
-    userId: number,
-    type: "access" | "refresh",
-    expiresAt: Date,
-    secret: string
-): string {
+export function generateSignedToken(userId: bigint, type: "access" | "refresh", expiresAt: Date, secret: string): string {
     const payload = {
         sub: userId,
         type,
         exp: Math.floor(expiresAt.getTime() / 1000),
-        jti: randomBytes(16).toString("hex")
+        jti: randomBytes(16).toString("hex"),
     };
 
     const encodedPayload = base64Url(JSON.stringify(payload));
-    const signature = createHmac("sha256", secret)
-        .update(encodedPayload)
-        .digest("base64url");
+    const signature = createHmac("sha256", secret).update(encodedPayload).digest("base64url");
 
     return `${encodedPayload}.${signature}`;
 }
