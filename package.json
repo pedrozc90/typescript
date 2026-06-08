@@ -1,0 +1,46 @@
+{
+    "name": "typescript",
+    "version": "1.0.0",
+    "description": "typescript playground",
+    "type": "module",
+    "main": "src/index.ts",
+    "scripts": {
+        "start": "node --experimental-strip-types --env-file=.env src/index.ts",
+        "start:dev": "node --watch --experimental-strip-types --env-file=.env src/index.ts",
+        "type-check": "tsc --noEmit",
+        "build": "tsc --project tsconfig.json",
+        "format": "prettier --check .",
+        "format:fix": "prettier --write .",
+        "lint": "eslint",
+        "lint:fix": "eslint --fix",
+        "test": "vitest",
+        "test:run": "vitest run",
+        "test:coverage": "vitest run --coverage"
+    },
+    "keywords": [
+        "typescript"
+    ],
+    "homepage": "https://github.com/pedrozc90/typescript#readme",
+    "bugs": {
+        "url": "https://github.com/pedrozc90/typescript/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/pedrozc90/typescript.git"
+    },
+    "author": "pedrozc90+github@gmail.com",
+    "license": "MIT",
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "@types/node": "^24.13.1",
+        "@types/supertest": "^7.2.0",
+        "@vitest/coverage-v8": "^4.1.8",
+        "eslint": "^10.4.1",
+        "globals": "^17.6.0",
+        "jiti": "^2.7.0",
+        "prettier": "^3.8.3",
+        "typescript": "^6.0.3",
+        "typescript-eslint": "^8.60.1",
+        "vitest": "^4.1.8"
+    }
+}

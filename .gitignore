@@ -1,0 +1,12 @@
+# IntelliJ
+.idea/*
+
+# VS Code
+.vscode/*
+
+# Node
+dist/*
+node_modules/*
+
+# Vitest
+coverage/*
