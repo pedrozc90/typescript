@@ -2,6 +2,18 @@ import { prisma } from "../libs/prisma.ts";
 import { hashPassword } from "../libs/crypto.ts";
 import type { CreateUserInput, UpdateUserInput, UserResponse } from "../../types/user.ts";
 
+export class EmailAlreadyExistsError extends Error {
+    constructor() {
+        super("email already exists");
+    }
+}
+
+export class UserNotFoundError extends Error {
+    constructor() {
+        super("user not found");
+    }
+}
+
 function toUserResponse(user: {
     id: number;
     email: string;
@@ -22,16 +34,33 @@ function toUserResponse(user: {
     };
 }
 
-export async function createUser(input: CreateUserInput): Promise<UserResponse> {
-    const user = await prisma.user.create({
-        data: {
-            email: input.email,
-            password: hashPassword(input.password),
-            role: input.role ?? "user"
-        }
-    });
+function hasPrismaCode(error: unknown, code: string): boolean {
+    return (
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        (error as { code?: string }).code === code
+    );
+}
 
-    return toUserResponse(user);
+export async function createUser(input: CreateUserInput): Promise<UserResponse> {
+    try {
+        const user = await prisma.user.create({
+            data: {
+                email: input.email,
+                password: hashPassword(input.password),
+                role: input.role ?? "user"
+            }
+        });
+
+        return toUserResponse(user);
+    } catch (error) {
+        if (hasPrismaCode(error, "P2002")) {
+            throw new EmailAlreadyExistsError();
+        }
+
+        throw error;
+    }
 }
 
 export async function updateUser(id: number, input: UpdateUserInput): Promise<UserResponse> {
@@ -60,12 +89,20 @@ export async function updateUser(id: number, input: UpdateUserInput): Promise<Us
         data.role = input.role;
     }
 
-    const user = await prisma.user.update({
-        where: { id },
-        data
-    });
+    try {
+        const user = await prisma.user.update({
+            where: { id },
+            data
+        });
 
-    return toUserResponse(user);
+        return toUserResponse(user);
+    } catch (error) {
+        if (hasPrismaCode(error, "P2025")) {
+            throw new UserNotFoundError();
+        }
+
+        throw error;
+    }
 }
 
 export async function getUserById(id: number): Promise<UserResponse | null> {

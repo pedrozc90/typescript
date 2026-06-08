@@ -11,7 +11,8 @@ export function createApp(): Koa {
     app.use(async (ctx, next) => {
         try {
             await next();
-        } catch {
+        } catch (error) {
+            console.error("Unhandled request error", error);
             ctx.status = 500;
             ctx.body = {
                 message: "internal server error"

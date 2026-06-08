@@ -1,6 +1,13 @@
 import Router from "@koa/router";
 import type Koa from "koa";
-import { createUser, getUserById, listUsers, updateUser } from "../services/user.service.ts";
+import {
+    createUser,
+    EmailAlreadyExistsError,
+    getUserById,
+    listUsers,
+    updateUser,
+    UserNotFoundError
+} from "../services/user.service.ts";
 import type { CreateUserInput, UpdateUserInput } from "../../types/user.ts";
 
 function parseId(value: string | undefined): number | null {
@@ -42,11 +49,17 @@ userRouter.post("/users", async (ctx) => {
 
         ctx.status = 201;
         ctx.body = user;
-    } catch {
-        ctx.status = 409;
-        ctx.body = {
-            message: "could not create user"
-        };
+    } catch (error) {
+        if (error instanceof EmailAlreadyExistsError) {
+            ctx.status = 409;
+            ctx.body = {
+                message: "email already exists"
+            };
+
+            return;
+        }
+
+        throw error;
     }
 });
 
@@ -73,11 +86,17 @@ userRouter.put("/users", async (ctx) => {
 
         ctx.status = 200;
         ctx.body = user;
-    } catch {
-        ctx.status = 404;
-        ctx.body = {
-            message: "user not found"
-        };
+    } catch (error) {
+        if (error instanceof UserNotFoundError) {
+            ctx.status = 404;
+            ctx.body = {
+                message: "user not found for update"
+            };
+
+            return;
+        }
+
+        throw error;
     }
 });
 

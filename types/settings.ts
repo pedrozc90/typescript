@@ -3,4 +3,5 @@ export interface Settings {
     port: number;
     databaseUrl: string;
     tokenExpiresInSeconds: number;
+    tokenSecret: string;
 }

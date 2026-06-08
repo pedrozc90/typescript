@@ -1,5 +1,5 @@
 import { prisma } from "../libs/prisma.ts";
-import { generateToken, verifyPassword } from "../libs/crypto.ts";
+import { generateSignedToken, verifyPassword } from "../libs/crypto.ts";
 import { settings } from "../../settings/index.ts";
 import type { LoginInput, LoginResponse } from "../../types/auth.ts";
 
@@ -25,11 +25,12 @@ export async function login(input: LoginInput): Promise<LoginResponse | null> {
     });
 
     const now = Date.now();
-    const expiresAt = new Date(now + settings.tokenExpiresInSeconds * 1000);
+    const accessExpiresAt = new Date(now + settings.tokenExpiresInSeconds * 1000);
+    const refreshExpiresAt = new Date(now + settings.tokenExpiresInSeconds * 2 * 1000);
 
     return {
-        access_token: generateToken(),
-        refresh_token: generateToken(),
-        expires_at: expiresAt.toISOString()
+        access_token: generateSignedToken(user.id, "access", accessExpiresAt, settings.tokenSecret),
+        refresh_token: generateSignedToken(user.id, "refresh", refreshExpiresAt, settings.tokenSecret),
+        expires_at: accessExpiresAt.toISOString()
     };
 }
