@@ -35,10 +35,20 @@ type LoginBody = {
     password?: string;
 };
 
-const SALT_ROUNDS = 10;
-
 const isValidEmail = (email: string): boolean => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (email.length > 254) {
+        return false;
+    }
+
+    const atPosition = email.indexOf("@");
+
+    if (atPosition <= 0 || atPosition !== email.lastIndexOf("@")) {
+        return false;
+    }
+
+    const domain = email.slice(atPosition + 1);
+
+    return domain.includes(".") && !domain.startsWith(".") && !domain.endsWith(".");
 };
 
 const normalizeRole = (role?: string): UserRole | undefined => {
@@ -117,7 +127,7 @@ app.post("/users", async (request: Request<unknown, unknown, CreateUserBody>, re
         return response.status(400).json({ error: "invalid role/profile" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+    const hashedPassword = await bcrypt.hash(password, config.bcryptSaltRounds);
 
     try {
         const user = await prisma.user.create({
@@ -178,7 +188,7 @@ app.put("/users", async (request: Request<unknown, unknown, UpdateUserBody>, res
     }
 
     if (password) {
-        updates.password = await bcrypt.hash(password, SALT_ROUNDS);
+        updates.password = await bcrypt.hash(password, config.bcryptSaltRounds);
     }
 
     if (role) {
@@ -264,7 +274,7 @@ app.post("/login", async (request: Request<unknown, unknown, LoginBody>, respons
         },
     });
 
-    const expiresAt = new Date(Date.now() + config.accessTokenExpiresInSeconds * 1000);
+    const accessTokenExpiresAt = new Date(Date.now() + config.accessTokenExpiresInSeconds * 1000);
 
     const accessToken = jwt.sign(
         {
@@ -292,7 +302,7 @@ app.post("/login", async (request: Request<unknown, unknown, LoginBody>, respons
     return response.status(200).json({
         access_token: accessToken,
         refresh_token: refreshToken,
-        expires_at: expiresAt.toISOString(),
+        expires_at: accessTokenExpiresAt.toISOString(),
     });
 });
 

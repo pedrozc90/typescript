@@ -15,7 +15,7 @@
    npm install
    ```
 
-2. Update environment variables in `/tmp/workspace/pedrozc90/typescript/.env`.
+2. Update environment variables in `.env`.
 
 3. Generate Prisma client:
 
@@ -42,10 +42,11 @@ npm run start
 - `GET /users/:id` get user information
 - `GET /users` list all users
 - `POST /login` login and return `access_token`, `refresh_token`, `expires_at`
+- `role` and `profile` are both accepted in `POST /users` and `PUT /users`; `role` takes precedence when both are provided.
 
 ## Prisma migrations
 
-- SQL migration files are stored in `/tmp/workspace/pedrozc90/typescript/prisma/migrations`.
+- SQL migration files are stored in `prisma/migrations`.
 - Initial migration creates `users` table with: email, password, inserted_at, updated_at, version, role, last_login_timestamp.
 
 ## License
