@@ -7,7 +7,8 @@ export default defineConfig([
     globalIgnores([
         "dist/",
         "node_modules/",
-        "coverage"
+        "coverage",
+        "src/generated/"
     ]),
     {
         files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],

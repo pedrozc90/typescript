@@ -10,3 +10,4 @@ node_modules/*
 
 # Vitest
 coverage/*
+src/generated/*

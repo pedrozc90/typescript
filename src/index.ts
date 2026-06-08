@@ -1,4 +1,8 @@
-const env = process.env["NODE_ENV"];
+import { createApp } from "./app.ts";
+import { settings } from "../settings/index.ts";
 
-console.log("Sanity Check");
-console.log("Environment", env);
+const app = createApp();
+
+app.listen(settings.port, () => {
+    console.log(`server running on port ${settings.port}`);
+});

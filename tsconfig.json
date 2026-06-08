@@ -1,31 +1,22 @@
 {
-    // Visit https://aka.ms/tsconfig to read more about this file
     "compilerOptions": {
-        /* --- File Layout --- */
-        "rootDir": "./src",
+        "rootDir": ".",
         "outDir": "./dist",
-
-        /* --- Environment Settings --- */
-        // See also https://aka.ms/tsconfig/module
         "module": "nodenext",
         "target": "esnext",
-        "lib": ["esnext"],
-        "types": ["node"],
-
-        /* --- Module Interop --- */
+        "lib": [
+            "esnext"
+        ],
+        "types": [
+            "node"
+        ],
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "isolatedModules": true,
         "moduleDetection": "force",
         "noUncheckedSideEffectImports": true,
         "verbatimModuleSyntax": true,
-
-        /* --- Outputs --- */
         "sourceMap": true,
-        // "declaration": true,     // only needed if publishing as a lib
-        // "declarationMap": true,  // only needed if publishing as a lib
-
-        /* --- Strict Type Checking --- */
         "strict": true,
         "noUncheckedIndexedAccess": true,
         "exactOptionalPropertyTypes": true,
@@ -35,16 +26,25 @@
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true,
         "noPropertyAccessFromIndexSignature": true,
-
-        /* --- Others --- */
         "noEmit": true,
-        "noCheck": true,
+        "noCheck": false,
         "skipLibCheck": true,
-
         "paths": {
-            "@/*": ["./src/*"]
-        }
+            "@/*": [
+                "./src/*"
+            ]
+        },
+        "allowImportingTsExtensions": true
     },
-    "include": ["src/**/*.ts", "test/**/*.spec.ts", "test/**/*.test.ts"],
-    "exclude": ["dist", "node_modules"]
+    "include": [
+        "src/**/*.ts",
+        "test/**/*.spec.ts",
+        "test/**/*.test.ts",
+        "settings/**/*.ts",
+        "types/**/*.ts"
+    ],
+    "exclude": [
+        "dist",
+        "node_modules"
+    ]
 }
